@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import WebCam from 'react-webcam'
 import { Button, Grid } from '@material-ui/core'
 import * as tf from '@tensorflow/tfjs';
@@ -13,17 +13,17 @@ class App extends React.Component {
     this.isTraining = true
     this.training = -1; // -1 when no class is being trained
     this.recordSamples = false;
-
     this.classes = ["Left", "Right"];
     this.testPrediction = false;
     this.training = true;
 
+    this.handleMouseDown = this.handleMouseDown.bind(this)
+    this.handleMouseUp = this.handleMouseUp.bind(this)
     this.test = this.test.bind(this)
     this.animate = this.animate.bind(this)
     this.state = {
       info: []
     }
-
     // Initiate deeplearn.js math and knn classifier objects
 
   }
@@ -34,8 +34,6 @@ class App extends React.Component {
 
   componentDidMount() {
     this.video = document.getElementById('webCam')
-
-
     this.loadClassifierAndModel();
     this.setupButtonEvents();
   }
@@ -44,22 +42,29 @@ class App extends React.Component {
     this.knn = knnClassifier.create();
     this.mobilenetModule = await mobilenet.load();
     console.log('model loaded')
-
     this.start();
   }
 
+  handleMouseDown(i) {
+    this.training = i;
+    this.recordSamples = true;
+  }
+
+  handleMouseUp() {
+    this.training = -1
+  }
 
   setupButtonEvents() {
     for (let i = 0; i < 2; i++) {
-      let button = document.getElementsByClassName("button")[i];
+      // let button = document.getElementsByClassName("button")[i];
 
-      button.onmousedown = () => {
-        this.training = i;
-        this.recordSamples = true;
-      };
-      button.onmouseup = () => (this.training = -1);
+      // button.onmousedown = () => {
+      //   this.training = i;
+      //   this.recordSamples = true;
+      // };
+      // button.onmouseup = () => (this.training = -1);
 
-      const infoText = " No examples added";
+      const infoText = "No examples added";
       this.infoTexts.push(infoText);
     }
 
@@ -150,13 +155,17 @@ class App extends React.Component {
     return (
       <div className="App">
         <header className="App-header">
-          <WebCam id={'webCam'} height={227} width={227}/>
+          <WebCam id={'webCam'}/>
           <Grid container>
             <Grid item xs={12} md={6}>
               <Button
                 className="button"
                 variant="contained"
-              >руки в экране есть!</Button>
+                onMouseDown={() => this.handleMouseDown(0)}
+                onMouseUp={() =>this.handleMouseUp()}
+              >
+                left
+              </Button>
               <p>
                 {this.infoTexts[0]}
               </p>
@@ -165,7 +174,11 @@ class App extends React.Component {
               <Button
                 className="button"
                 variant="contained"
-              >рук в экране нет!</Button>
+                onMouseDown={() => this.handleMouseDown(1)}
+                onMouseUp={() =>this.handleMouseUp()}
+              >
+                right
+              </Button>
               <p>
                 {this.infoTexts[1]}
               </p>
