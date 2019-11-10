@@ -4,6 +4,7 @@ import { Button, Grid } from '@material-ui/core'
 import * as tf from '@tensorflow/tfjs';
 import * as knnClassifier from '@tensorflow-models/knn-classifier';
 import * as mobilenet from '@tensorflow-models/mobilenet'
+import Loader from '../loader'
 import './index.css'
 
 export default class Index extends React.Component {
@@ -11,7 +12,7 @@ export default class Index extends React.Component {
     super(props);
     this.infoTexts = [];
     this.isTraining = true
-    this.training = -1; // -1 when no class is being trained
+    this.training = -1; // -1 используем если не тренируем
     this.recordSamples = false;
     this.classes = ["Left", "Right"];
     this.testPrediction = false;
@@ -22,10 +23,9 @@ export default class Index extends React.Component {
     this.startPredictions = this.startPredictions.bind(this)
     this.animate = this.animate.bind(this)
     this.state = {
+      loading: false,
       info: []
     }
-    // Initiate deeplearn.js math and knn classifier objects
-
   }
 
   startPredictions() {
@@ -34,8 +34,15 @@ export default class Index extends React.Component {
 
   componentDidMount() {
     this.video = document.getElementById('webCam')
-    this.loadClassifierAndModel();
-    this.setupButtonEvents();
+    this.setState({
+      loading: true
+    })
+    this.loadClassifierAndModel().then(() => (
+      this.setState({
+        loading: false
+      })
+    ))
+    this.setup();
   }
 
   async loadClassifierAndModel() {
@@ -54,7 +61,7 @@ export default class Index extends React.Component {
     this.training = -1
   }
 
-  setupButtonEvents() {
+  setup() {
     for (let i = 0; i < 2; i++) {
       const infoText = "Не добавлено примеров";
       this.infoTexts.push(infoText);
@@ -147,38 +154,47 @@ export default class Index extends React.Component {
     return (
 
       <Grid container alignItems={'center'}>
-        <Grid item xs={12} md={4}>
-          <Button
-            className="button"
-            variant="contained"
-            onMouseDown={() => this.handleMouseDown(0)}
-            onMouseUp={() =>this.handleMouseUp()}
-          >
-            Положение слева
-          </Button>
-          <p>
-            {this.infoTexts[0]}
-          </p>
-        </Grid>
-        <Grid item xs={12} md={4}>
-          <WebCam id={'webCam'} width={300} height={300} />
-        </Grid>
-        <Grid item xs={12} md={4}>
-          <Button
-            className="button"
-            variant="contained"
-            onMouseDown={() => this.handleMouseDown(1)}
-            onMouseUp={() =>this.handleMouseUp()}
-          >
-            Положение справа
-          </Button>
-          <p>
-            {this.infoTexts[1]}
-          </p>
-        </Grid>
-        <Grid item md={12}>
-          <Button onClick={this.startPredictions} variant="contained">предсказать!</Button>
-        </Grid>
+
+        {this.state.loading ? (
+          <Grid item md={12}>
+            <Loader/>
+          </Grid>
+        ) : (
+          <>
+            <Grid item xs={12} md={4}>
+              <Button
+                className="button"
+                variant="contained"
+                onMouseDown={() => this.handleMouseDown(0)}
+                onMouseUp={() =>this.handleMouseUp()}
+              >
+                Положение слева
+              </Button>
+              <p>
+                {this.infoTexts[0]}
+              </p>
+            </Grid>
+            <Grid item xs={12} md={4}>
+              <WebCam id={'webCam'} width={300} height={300} />
+            </Grid>
+            <Grid item xs={12} md={4}>
+              <Button
+                className="button"
+                variant="contained"
+                onMouseDown={() => this.handleMouseDown(1)}
+                onMouseUp={() =>this.handleMouseUp()}
+              >
+                Положение справа
+              </Button>
+              <p>
+                {this.infoTexts[1]}
+              </p>
+            </Grid>
+            <Grid item md={12}>
+              <Button onClick={this.startPredictions} variant="contained">предсказать!</Button>
+            </Grid>
+          </>
+        )}
       </Grid>
 
     );
