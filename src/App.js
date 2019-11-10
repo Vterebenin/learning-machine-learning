@@ -19,7 +19,7 @@ class App extends React.Component {
 
     this.handleMouseDown = this.handleMouseDown.bind(this)
     this.handleMouseUp = this.handleMouseUp.bind(this)
-    this.test = this.test.bind(this)
+    this.startPredictions = this.startPredictions.bind(this)
     this.animate = this.animate.bind(this)
     this.state = {
       info: []
@@ -28,7 +28,7 @@ class App extends React.Component {
 
   }
 
-  test() {
+  startPredictions() {
     this.testPrediction = true
   }
 
@@ -186,7 +186,7 @@ class App extends React.Component {
           </Grid>
           <Grid container>
             <Grid item md={12}>
-              <Button onClick={this.test} variant="contained">предсказать!</Button>
+              <Button onClick={this.startPredictions} variant="contained">предсказать!</Button>
             </Grid>
           </Grid>
         </header>
