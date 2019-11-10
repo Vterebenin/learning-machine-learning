@@ -1,0 +1,21 @@
+{
+  "files": {
+    "main.css": "/learning-machine-learning/static/css/main.d5370121.chunk.css",
+    "main.js": "/learning-machine-learning/static/js/main.c69d50ce.chunk.js",
+    "main.js.map": "/learning-machine-learning/static/js/main.c69d50ce.chunk.js.map",
+    "runtime-main.js": "/learning-machine-learning/static/js/runtime-main.72756407.js",
+    "runtime-main.js.map": "/learning-machine-learning/static/js/runtime-main.72756407.js.map",
+    "static/js/2.1eb68e3c.chunk.js": "/learning-machine-learning/static/js/2.1eb68e3c.chunk.js",
+    "static/js/2.1eb68e3c.chunk.js.map": "/learning-machine-learning/static/js/2.1eb68e3c.chunk.js.map",
+    "index.html": "/learning-machine-learning/index.html",
+    "precache-manifest.a0408d65c6f77b1fa030ee5402348711.js": "/learning-machine-learning/precache-manifest.a0408d65c6f77b1fa030ee5402348711.js",
+    "service-worker.js": "/learning-machine-learning/service-worker.js",
+    "static/css/main.d5370121.chunk.css.map": "/learning-machine-learning/static/css/main.d5370121.chunk.css.map"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.72756407.js",
+    "static/js/2.1eb68e3c.chunk.js",
+    "static/css/main.d5370121.chunk.css",
+    "static/js/main.c69d50ce.chunk.js"
+  ]
+}
