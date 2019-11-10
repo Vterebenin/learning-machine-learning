@@ -17,6 +17,7 @@ export default class Index extends React.Component {
     this.classes = ["Left", "Right"];
     this.testPrediction = false;
     this.training = true;
+    this.numberOfSubjects = 2;
 
     this.handleMouseDown = this.handleMouseDown.bind(this)
     this.handleMouseUp = this.handleMouseUp.bind(this)
@@ -33,7 +34,6 @@ export default class Index extends React.Component {
   }
 
   componentDidMount() {
-    this.video = document.getElementById('webCam')
     this.setState({
       loading: true
     })
@@ -44,10 +44,15 @@ export default class Index extends React.Component {
     ))
     this.setup();
   }
+  componentDidUpdate(prevProps, prevState, snapshot) {
+    this.video = document.getElementById('webCam')
+  }
 
   async loadClassifierAndModel() {
     this.knn = knnClassifier.create();
     this.mobilenetModule = await mobilenet.load();
+
+    console.log(this.video)
     console.log('model loaded')
     this.start();
   }
@@ -62,7 +67,7 @@ export default class Index extends React.Component {
   }
 
   setup() {
-    for (let i = 0; i < 2; i++) {
+    for (let i = 0; i < this.numberOfSubjects; i++) {
       const infoText = "Не добавлено примеров";
       this.infoTexts.push(infoText);
     }
@@ -105,19 +110,24 @@ export default class Index extends React.Component {
       if (this.testPrediction) {
         this.isTraining = false;
         if (numClasses > 0) {
-          // If classes have been added run predict
+          // Если были добавлены классы, то запускаем предположение
           logits = infer();
+          // Значение K в алгоритме KNN важно, потому что оно представляет количество
+          // экземпляров, которые мы учитываем при определении класса нашего ввода.
+          // В этом случае значение 10 означает, что при прогнозировании метки
+          // для некоторых новых данных мы будем смотреть на 10 ближайших
+          // соседей из обучающих данных, чтобы определить, как классифицировать новый вход.
           const res = await this.knn.predictClass(logits, 10);
           console.log(res.confidences)
 
-          for (let i = 0; i < 2; i++) {
-            // The number of examples for each class
+          for (let i = 0; i < this.numberOfSubjects; i++) {
+            // Количество примеров для каждого класса
             const exampleCount = this.knn.getClassExampleCount();
 
             if (exampleCount[i] > 0) {
               this.infoTexts[i] = ` ${
                 exampleCount[i]
-              } examples - ${res.confidences[i] * 100}%`;
+              } примеров - ${res.confidences[i] * 100}%`;
               this.setState({
                 info: this.infoTexts
               })
@@ -127,10 +137,10 @@ export default class Index extends React.Component {
       }
 
       if (this.isTraining) {
-        // The number of examples for each class
+        // Количество примеров для каждого класса
         const exampleCount = this.knn.getClassExampleCount();
 
-        for (let i = 0; i < 2; i++) {
+        for (let i = 0; i < this.numberOfSubjects; i++) {
           if (exampleCount[i] > 0) {
             this.infoTexts[i] = ` добавлено ${exampleCount[i]} примеров`;
             this.setState({
@@ -140,7 +150,7 @@ export default class Index extends React.Component {
         }
       }
 
-      // Dispose image when done
+      // В завершении удаляем обработанное изображение
       image.dispose();
       if (logits != null) {
         logits.dispose();
@@ -175,7 +185,7 @@ export default class Index extends React.Component {
               </p>
             </Grid>
             <Grid item xs={12} md={4}>
-              <WebCam id={'webCam'} width={300} height={300} />
+              <WebCam id={'webCam'} width={227} height={227} />
             </Grid>
             <Grid item xs={12} md={4}>
               <Button
@@ -191,7 +201,7 @@ export default class Index extends React.Component {
               </p>
             </Grid>
             <Grid item md={12}>
-              <Button onClick={this.startPredictions} variant="contained">предсказать!</Button>
+              <Button onClick={this.startPredictions} variant="contained">Предсказать!</Button>
             </Grid>
           </>
         )}
