@@ -176,7 +176,9 @@ export default class Index extends React.Component {
                 className="button"
                 variant="contained"
                 onMouseDown={() => this.handleMouseDown(0)}
+                onTouchStart={() => this.handleMouseDown(0)}
                 onMouseUp={() =>this.handleMouseUp()}
+                onTouchEnd={() =>this.handleMouseUp()}
               >
                 Положение слева
               </Button>
@@ -192,7 +194,9 @@ export default class Index extends React.Component {
                 className="button"
                 variant="contained"
                 onMouseDown={() => this.handleMouseDown(1)}
+                onTouchStart={() => this.handleMouseDown(1)}
                 onMouseUp={() =>this.handleMouseUp()}
+                onTouchEnd={() =>this.handleMouseUp()}
               >
                 Положение справа
               </Button>
